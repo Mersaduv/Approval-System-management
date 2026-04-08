@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { TableRowSkeleton, CardSkeleton } from '../Components/SkeletonLoader'
 import Pagination from '../Components/Pagination'
+import HorizontalScrollTable from '../Components/HorizontalScrollTable'
 
 export default function LeaveRequests({ auth }) {
     const [leaveRequests, setLeaveRequests] = useState([])
@@ -273,7 +274,7 @@ export default function LeaveRequests({ auth }) {
                 )}
 
                 {/* Leave Requests Table - Desktop */}
-                <div className="hidden lg:block bg-white shadow-sm rounded-lg overflow-hidden">
+                <HorizontalScrollTable className="hidden lg:block bg-white shadow-sm rounded-lg">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
@@ -375,7 +376,7 @@ export default function LeaveRequests({ auth }) {
                             )}
                         </tbody>
                     </table>
-                </div>
+                </HorizontalScrollTable>
 
                 {/* Leave Requests Cards - Mobile */}
                 <div className="lg:hidden space-y-4">

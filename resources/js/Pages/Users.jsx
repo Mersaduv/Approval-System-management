@@ -5,6 +5,7 @@ import axios from 'axios'
 import AlertModal from '../Components/AlertModal'
 import { TableRowSkeleton, CardSkeleton } from '../Components/SkeletonLoader'
 import Pagination from '../Components/Pagination'
+import HorizontalScrollTable from '../Components/HorizontalScrollTable'
 
 export default function Users({ auth }) {
     const [users, setUsers] = useState([])
@@ -359,7 +360,7 @@ export default function Users({ auth }) {
                 </div>
 
                 {/* Users Table - Desktop */}
-                <div className="hidden lg:block bg-white shadow-sm rounded-lg overflow-hidden">
+                <HorizontalScrollTable className="hidden lg:block bg-white shadow-sm rounded-lg">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
@@ -435,7 +436,7 @@ export default function Users({ auth }) {
                             )}
                         </tbody>
                     </table>
-                </div>
+                </HorizontalScrollTable>
 
                 {/* Users Cards - Mobile */}
                 <div className="lg:hidden space-y-4">

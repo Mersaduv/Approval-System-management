@@ -1,5 +1,122 @@
 @import "tailwindcss";
 
+html {
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+img,
+svg,
+video,
+canvas {
+    display: block;
+    max-width: 100%;
+}
+
+.table-scroll-shell {
+    border-radius: 0.5rem;
+}
+
+.table-scrollbar-rail,
+.table-scrollbar-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+    border-color: #e5e7eb;
+}
+
+.table-scrollbar-rail {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table-scrollbar-footer {
+    border-top: 1px solid #e5e7eb;
+}
+
+.table-scrollbar-label {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #475569;
+}
+
+.table-scrollbar-caption {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.table-scrollbar-track,
+.table-scroll-content {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #e2e8f0;
+}
+
+.table-scrollbar-track {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 9999px;
+}
+
+.table-scroll-content {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-gutter: stable both-edges;
+}
+
+.table-scrollbar-track::-webkit-scrollbar,
+.table-scroll-content::-webkit-scrollbar {
+    height: 12px;
+}
+
+.table-scrollbar-track::-webkit-scrollbar-track,
+.table-scroll-content::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 9999px;
+}
+
+.table-scrollbar-track::-webkit-scrollbar-thumb,
+.table-scroll-content::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 9999px;
+    border: 2px solid #e2e8f0;
+}
+
+.table-scrollbar-track::-webkit-scrollbar-thumb:hover,
+.table-scroll-content::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .modal-backdrop,
+    .modal-backdrop-light,
+    .modal-backdrop-very-light,
+    .modal-backdrop-danger,
+    .modal-backdrop-success,
+    .confirmation-modal-overlay,
+    .alert-modal-overlay {
+        background-color: rgba(15, 23, 42, 0.55) !important;
+    }
+}
+
 /* Global Modal Background Styles */
 .modal-backdrop {
     background-color: rgba(0, 0, 0, 0.5);
