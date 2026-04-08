@@ -3,110 +3,82 @@ import { useEffect, useRef, useState } from 'react'
 export default function HorizontalScrollTable({
     children,
     className = '',
-    innerClassName = '',
+    tableClassName = '',
 }) {
     const topScrollRef = useRef(null)
-    const bottomScrollRef = useRef(null)
-    const contentRef = useRef(null)
-    const syncingRef = useRef(false)
+    const tableScrollRef = useRef(null)
     const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false)
-    const [contentWidth, setContentWidth] = useState(0)
 
     useEffect(() => {
-        const topNode = topScrollRef.current
-        const bottomNode = bottomScrollRef.current
+        const topScroll = topScrollRef.current
+        const tableScroll = tableScrollRef.current
 
-        if (!topNode || !bottomNode) {
+        if (!topScroll || !tableScroll) {
             return undefined
         }
 
-        const syncScroll = (source, target) => {
-            if (syncingRef.current) {
+        const updateTopScrollbarWidth = () => {
+            const table = tableScroll.querySelector('table')
+            const spacer = topScroll.firstElementChild
+
+            if (!table || !spacer) {
                 return
             }
 
-            syncingRef.current = true
-            target.scrollLeft = source.scrollLeft
-            window.requestAnimationFrame(() => {
-                syncingRef.current = false
-            })
+            spacer.style.width = `${table.scrollWidth}px`
+            setHasHorizontalOverflow(table.scrollWidth > tableScroll.clientWidth + 1)
         }
 
-        const handleTopScroll = () => syncScroll(topNode, bottomNode)
-        const handleBottomScroll = () => syncScroll(bottomNode, topNode)
+        const handleTableScroll = () => {
+            topScroll.scrollLeft = tableScroll.scrollLeft
+        }
 
-        topNode.addEventListener('scroll', handleTopScroll, { passive: true })
-        bottomNode.addEventListener('scroll', handleBottomScroll, { passive: true })
+        const handleTopScroll = () => {
+            tableScroll.scrollLeft = topScroll.scrollLeft
+        }
+
+        updateTopScrollbarWidth()
+
+        const resizeObserver = new ResizeObserver(() => {
+            updateTopScrollbarWidth()
+        })
+
+        const table = tableScroll.querySelector('table')
+        if (table) {
+            resizeObserver.observe(table)
+        }
+        resizeObserver.observe(tableScroll)
+
+        window.addEventListener('resize', updateTopScrollbarWidth)
+        tableScroll.addEventListener('scroll', handleTableScroll)
+        topScroll.addEventListener('scroll', handleTopScroll)
 
         return () => {
-            topNode.removeEventListener('scroll', handleTopScroll)
-            bottomNode.removeEventListener('scroll', handleBottomScroll)
-        }
-    }, [])
-
-    useEffect(() => {
-        const updateMeasurements = () => {
-            const contentNode = contentRef.current
-            const bottomNode = bottomScrollRef.current
-
-            if (!contentNode || !bottomNode) {
-                return
-            }
-
-            const nextWidth = contentNode.scrollWidth
-            setContentWidth(nextWidth)
-            setHasHorizontalOverflow(nextWidth > bottomNode.clientWidth + 1)
-        }
-
-        updateMeasurements()
-
-        let resizeObserver
-
-        if (typeof ResizeObserver !== 'undefined' && contentRef.current) {
-            resizeObserver = new ResizeObserver(() => {
-                updateMeasurements()
-            })
-
-            resizeObserver.observe(contentRef.current)
-
-            if (bottomScrollRef.current) {
-                resizeObserver.observe(bottomScrollRef.current)
-            }
-        }
-
-        window.addEventListener('resize', updateMeasurements)
-
-        return () => {
-            window.removeEventListener('resize', updateMeasurements)
-            if (resizeObserver) {
-                resizeObserver.disconnect()
-            }
+            window.removeEventListener('resize', updateTopScrollbarWidth)
+            tableScroll.removeEventListener('scroll', handleTableScroll)
+            topScroll.removeEventListener('scroll', handleTopScroll)
+            resizeObserver.disconnect()
         }
     }, [children])
 
     return (
-        <div className={`table-scroll-shell ${className}`}>
+        <div className={className}>
             {hasHorizontalOverflow && (
-                <div className="table-scrollbar-rail">
-                    <span className="table-scrollbar-label">Scroll</span>
-                    <div ref={topScrollRef} className="table-scrollbar-track">
-                        <div style={{ width: `${contentWidth}px` }} className="h-px" />
-                    </div>
+                <div
+                    ref={topScrollRef}
+                    className="table-top-scroll overflow-x-auto overflow-y-hidden scrollbar-thin"
+                    style={{ height: '17px', direction: 'ltr' }}
+                >
+                    <div style={{ height: '1px' }} className="min-w-full" />
                 </div>
             )}
 
-            <div ref={bottomScrollRef} className={`table-scroll-content ${innerClassName}`}>
-                <div ref={contentRef} className="inline-block min-w-full align-middle">
-                    {children}
-                </div>
+            <div
+                ref={tableScrollRef}
+                className={`table-bottom-scroll overflow-x-auto ${tableClassName}`}
+            >
+                {children}
             </div>
-
-            {hasHorizontalOverflow && (
-                <div className="table-scrollbar-footer">
-                    <span className="table-scrollbar-label">Scroll</span>
-                    <span className="table-scrollbar-caption">Use the bottom bar to see more columns</span>
-                </div>
-            )}
         </div>
     )
 }

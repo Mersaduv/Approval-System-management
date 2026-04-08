@@ -27,82 +27,35 @@ canvas {
     max-width: 100%;
 }
 
-.table-scroll-shell {
-    border-radius: 0.5rem;
+.table-top-scroll,
+.table-bottom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
-.table-scrollbar-rail,
-.table-scrollbar-footer {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 0.75rem;
-    background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
-    border-color: #e5e7eb;
-}
-
-.table-scrollbar-rail {
+.table-top-scroll {
     border-bottom: 1px solid #e5e7eb;
 }
 
-.table-scrollbar-footer {
-    border-top: 1px solid #e5e7eb;
+.table-top-scroll::-webkit-scrollbar,
+.table-bottom-scroll::-webkit-scrollbar {
+    height: 10px;
 }
 
-.table-scrollbar-label {
-    flex-shrink: 0;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #475569;
+.table-top-scroll::-webkit-scrollbar-track,
+.table-bottom-scroll::-webkit-scrollbar-track {
+    background: #f1f5f9;
 }
 
-.table-scrollbar-caption {
-    font-size: 0.75rem;
-    color: #64748b;
-}
-
-.table-scrollbar-track,
-.table-scroll-content {
-    scrollbar-width: thin;
-    scrollbar-color: #94a3b8 #e2e8f0;
-}
-
-.table-scrollbar-track {
-    flex: 1;
-    overflow-x: auto;
-    overflow-y: hidden;
+.table-top-scroll::-webkit-scrollbar-thumb,
+.table-bottom-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
     border-radius: 9999px;
 }
 
-.table-scroll-content {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-gutter: stable both-edges;
-}
-
-.table-scrollbar-track::-webkit-scrollbar,
-.table-scroll-content::-webkit-scrollbar {
-    height: 12px;
-}
-
-.table-scrollbar-track::-webkit-scrollbar-track,
-.table-scroll-content::-webkit-scrollbar-track {
-    background: #e2e8f0;
-    border-radius: 9999px;
-}
-
-.table-scrollbar-track::-webkit-scrollbar-thumb,
-.table-scroll-content::-webkit-scrollbar-thumb {
+.table-top-scroll::-webkit-scrollbar-thumb:hover,
+.table-bottom-scroll::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
-    border-radius: 9999px;
-    border: 2px solid #e2e8f0;
-}
-
-.table-scrollbar-track::-webkit-scrollbar-thumb:hover,
-.table-scroll-content::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
 }
 
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
