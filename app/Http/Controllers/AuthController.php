@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use App\Models\User;
@@ -24,10 +25,15 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $request->validate([
+        // Manual validation to avoid automatic redirect
+        $validator = \Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|string|min:8',
         ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator->errors())->withInput();
+        }
 
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
@@ -36,7 +42,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             // Debug: Log successful authentication
-            \Log::info('User authenticated successfully', [
+            Log::info('User authenticated successfully', [
                 'user_id' => Auth::id(),
                 'email' => $request->email
             ]);
@@ -52,13 +58,24 @@ class AuthController extends Controller
         }
 
         // Debug: Log failed authentication
-        \Log::warning('Authentication failed', [
+        Log::warning('Authentication failed', [
             'email' => $request->email,
             'ip' => $request->ip()
         ]);
 
-        throw ValidationException::withMessages([
-            'email' => 'The provided credentials do not match our records.',
+        // Log the error response
+        Log::info('Returning validation errors', [
+            'errors' => ['email' => 'Authentication failed'],
+            'is_inertia' => $request->header('X-Inertia')
+        ]);
+
+        // Return validation errors for Inertia.js
+        // Use Inertia::render instead of back() to avoid redirect
+        return Inertia::render('Auth/Login', [
+            'errors' => [
+                'password' => 'The provided credentials do not match our records.',
+            ],
+            'old' => $request->only('email', 'remember')
         ]);
     }
 

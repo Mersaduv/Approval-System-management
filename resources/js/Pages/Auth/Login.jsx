@@ -1,21 +1,27 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import { useState } from 'react'
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ status, canResetPassword, errors: serverErrors = {} }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
         remember: false,
     })
 
+    // Merge server errors with form errors
+    const allErrors = { ...errors, ...serverErrors }
+
     const [showPassword, setShowPassword] = useState(false)
 
     const submit = (e) => {
         e.preventDefault()
         post(route('login'), {
-            onFinish: () => reset('password'),
             onSuccess: (page) => {
                 console.log('Login successful, redirecting...', page)
+                // Only reset password if we're actually redirecting to a different page
+                if (page.url !== '/login') {
+                    reset('password')
+                }
             },
             onError: (errors) => {
                 console.log('Login failed with errors:', errors)
@@ -50,13 +56,20 @@ export default function Login({ status, canResetPassword }) {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                className={`appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ${
+                                    allErrors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                                }`}
                                 placeholder="Email address"
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                             />
-                            {errors.email && (
-                                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                            {allErrors.email && (
+                                <div className="mt-4 flex items-center text-sm text-red-600">
+                                    <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    <span>{allErrors.email}</span>
+                                </div>
                             )}
                         </div>
                         <div className="relative">
@@ -69,7 +82,9 @@ export default function Login({ status, canResetPassword }) {
                                 type={showPassword ? 'text' : 'password'}
                                 autoComplete="current-password"
                                 required
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                className={`appearance-none rounded-none relative block w-full px-3 py-2 pr-10 border placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ${
+                                    allErrors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                                }`}
                                 placeholder="Password"
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
@@ -90,12 +105,17 @@ export default function Login({ status, canResetPassword }) {
                                     </svg>
                                 )}
                             </button>
-                            {errors.password && (
-                                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-                            )}
+
                         </div>
                     </div>
-
+                    {allErrors.password && (
+                                <div className="flex items-center text-sm text-red-600">
+                                    <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    <span>{allErrors.password}</span>
+                                </div>
+                            )}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center">
                             <input
@@ -148,6 +168,7 @@ export default function Login({ status, canResetPassword }) {
                             {status}
                         </div>
                     )}
+
                 </form>
 
                 <div className="text-center">
